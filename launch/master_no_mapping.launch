@@ -1,0 +1,37 @@
+<launch>
+    <rosparam command="delete" ns="move_base" />
+    <include file="$(find fetch_auto_dock)/launch/auto_dock.launch"/>
+    <!-- <node name="map_server" pkg="map_server" type="map_server" args="/home/eriksenc/demomap.yaml" /> -->
+    <include file="$(find mapping)/launch/fetch_nav.launch">
+        <arg name="map_file" value="$(find mapping)/maps/new_map.yaml" />
+        <arg name="map_keepout_file" value="$(find mapping)/maps/new_map_keepout.yaml" />
+        <arg name="use_keepout" value="true" />
+        <arg name="serve_map" value="true" />
+    </include>
+
+    <node pkg="apriltags_ros" type="apriltag_detector_node" name="apriltag_detector">
+        <!-- Remap topic required by the node to custom topics -->
+        <remap from="image_rect" to="head_camera/rgb/image_rect_color" />
+        <remap from="camera_info" to="head_camera/rgb/camera_info" />
+  
+        <!-- Optional: Subscribe to the compressed stream-->
+        <param name="image_transport" type="str" value="compressed" />
+  
+        <!-- Select the tag family: 16h5, 25h7, 25h9, 36h9, or 36h11(default) -->
+        <param name="tag_family" type="str" value="36h11" />
+  
+        <!-- Enable projected optical measurements for more accurate tag transformations -->
+        <!-- This exists for backwards compatability and should be left true for new setups -->
+        <param name="projected_optics" type="bool" value="true" />
+  
+        <!-- Describe the tags -->
+        <rosparam param="tag_descriptions">[
+            {id: 0, size: 0.163513, frame_id: tag_0},
+            {id: 1, size: 0.163513, frame_id: tag_1},
+            {id: 2, size: 0.163513, frame_id: tag_2},
+            {id: 3, size: 0.163513},
+            {id: 4, size: 0.163513},
+            {id: 5, size: 0.163513}]
+        </rosparam>
+    </node>
+</launch>

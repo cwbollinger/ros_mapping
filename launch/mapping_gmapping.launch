@@ -1,0 +1,8 @@
+<launch>
+    <node name="gmapping_node" pkg="gmapping" type="slam_gmapping">
+        <param name="map_udpate_interval" value="1.0" />
+        <param name="minimum_score" value="100" />
+        <remap from="scan" to="/base_scan" />
+        <remap from="odom" to="/odom" />
+    </node>
+</launch>

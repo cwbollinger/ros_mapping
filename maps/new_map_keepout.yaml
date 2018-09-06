@@ -1,0 +1,7 @@
+image: new_map_keepout.pgm
+resolution: 0.100000
+origin: [-38.632828, -5.211783, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+

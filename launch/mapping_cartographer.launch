@@ -1,0 +1,13 @@
+<launch>
+    <node name="cartographer_node" pkg="cartographer_ros"
+        type="cartographer_node" args="
+            -configuration_directory
+                /home/eriksenc
+            -configuration_basename carto_settings.lua">
+        <remap from="scan" to="/base_scan" />
+        <remap from="odom" to="/odom" />
+    </node>
+
+    <node name="cartographer_occupancy_grid_node" pkg="cartographer_ros"
+        type="cartographer_occupancy_grid_node" args="-resolution 0.05" />
+</launch>

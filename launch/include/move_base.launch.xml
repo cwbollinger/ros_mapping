@@ -1,0 +1,94 @@
+<launch>
+
+  <!-- fetch or freight? -->
+  <arg name="name" />
+
+  <!-- set topics -->
+  <arg name="map_topic" default="map" />
+  <arg name="cmd_vel_topic" default="cmd_vel" />
+  <arg name="odom_topic" default="odom" />
+
+  <!-- planners, costmaps, etc -->
+  <node pkg="move_base" type="move_base" name="move_base" respawn="true" output="screen">
+    <rosparam ns="local_costmap">
+        robot_base_frame: base_link
+
+        transform_tolerance: 0.5
+        
+        robot_radius: 0.30
+        inflater:
+          robot_radius: 0.30
+          inflation_radius: 0.70
+
+        obstacles:
+          observation_sources: base_scan
+          publish_observations: false
+          base_scan:
+            data_type: LaserScan
+            topic: base_scan
+            marking: true
+            clearing: true
+            obstacle_range: 4.0
+            raytrace_range: 5.0
+            min_obstacle_height: 0.25
+            max_obstacle_height: 0.3
+          z_voxels: 16
+          z_resolution: 0.125
+          max_obstacle_height: 2.0
+
+        global_frame: odom
+        rolling_window: true
+        publish_frequency: 2.0
+
+        width: 4.0
+        height: 4.0
+        resolution: 0.025
+
+        plugins:
+         - {name: obstacles, type: "costmap_2d::FetchDepthLayer"}
+         - {name: inflater, type: "costmap_2d::InflationLayer"}
+
+    </rosparam>
+
+    <rosparam ns="global_costmap">
+        robot_base_frame: base_link
+
+        transform_tolerance: 0.5
+        
+        robot_radius: 0.30
+        inflater:
+          robot_radius: 0.30
+          inflation_radius: 0.70
+
+        obstacles:
+          observation_sources: base_scan
+          base_scan:
+            data_type: LaserScan
+            topic: base_scan
+            marking: true
+            clearing: true
+            obstacle_range: 4.0
+            raytrace_range: 5.0
+            min_obstacle_height: 0.25
+            max_obstacle_height: 0.3
+          z_voxels: 16
+          z_resolution: 0.125
+          max_obstacle_height: 2.0
+
+        global_frame: map
+        update_frequency: 5.0
+        publish_frequency: 0.0
+        static_map: true
+        plugins:
+         - {name: static_map, type: "costmap_2d::StaticLayer"}
+         - {name: obstacles, type: "costmap_2d::FetchDepthLayer"}
+         - {name: inflater, type: "costmap_2d::InflationLayer"}
+    </rosparam>
+    <rosparam file="$(find fetch_navigation)/config/move_base.yaml" command="load" />
+    <rosparam file="$(find fetch_navigation)/config/$(arg name)/move_base.yaml" command="load" />
+    <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+    <remap from="map" to="$(arg map_topic)" />
+  </node>
+
+</launch>
